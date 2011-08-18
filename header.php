@@ -2,8 +2,8 @@
 <html>
 <head>
 	<title></title>
-	<?php $kisMinify->addJs("lib/jquery-1.6.2.min.js"); ?>
-	<?php $kisMinify->addJs("base.js"); ?>
+	<?php //$kisMinify->addJs("lib/jquery-1.6.2.min.js"); ?>
+	<?php //$kisMinify->addJs("base.js"); ?>
 	<?php echo $testvar ?>
 </head>
 <body>
