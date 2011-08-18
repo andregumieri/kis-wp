@@ -22,7 +22,7 @@
  * @param mixed $size The string of a thumbnail size or a array with width and height.
  * @return mixed false when has no thumbnail or string when has.
  */
-function kis_get_thumbnail_url($post_id, $size='large') {
+function kis_get_thumbnail_url($post_id, $size='original') {
 	$image_id = get_post_thumbnail_id($post_id);  
 	if(!empty($image_id)) {
 		$image_url = wp_get_attachment_image_src($image_id, $size);  
