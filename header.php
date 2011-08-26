@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title><?php bloginfo("name"); ?> - <?php bloginfo("description"); ?></title>
+	<link rel="stylesheet" type="text/css" media="all" href="<?php bloginfo( 'stylesheet_url' ); ?>" />
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 </head>
 <body>
