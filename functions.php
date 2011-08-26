@@ -1,5 +1,6 @@
 <?php
-require("kis/kis.php");
-$kisMinify = new kis\Minify();
-$kisMinify->addJs("base.js");
+require("kis/kis.php"); // Funções padrões do KIS (Required)
+require("kis/kis_thumbnail.php"); // Módulo de thumbnails do post
+
+
 ?>
