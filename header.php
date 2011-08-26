@@ -4,5 +4,7 @@
 	<title><?php bloginfo("name"); ?> - <?php bloginfo("description"); ?></title>
 	<link rel="stylesheet" type="text/css" media="all" href="<?php bloginfo( 'stylesheet_url' ); ?>" />
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>" />
+	<?php wp_head(); ?>
 </head>
-<body>
+<body <?php body_class(); ?>>
