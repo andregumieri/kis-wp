@@ -1,6 +1,4 @@
-var kisGeneral = function() {
-	var self = this;
-	
+var KisGeneral = {
 	/**
 	 * Função para dar um replace All em strings
 	 *
@@ -10,7 +8,7 @@ var kisGeneral = function() {
 	 *
 	 * @return string: Nova string substituida
 	 */
-	this.replaceAll = function(string, token, newtoken) {
+	replaceAll : function(string, token, newtoken) {
 		if(string!="") {
 			while (string.indexOf(token) != -1) {
 		 		string = string.replace(token, newtoken);
