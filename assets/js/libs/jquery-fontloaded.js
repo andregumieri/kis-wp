@@ -30,17 +30,15 @@
 		}
 		
 		var verify_interval = window.setInterval(function() {
-			console.log("verifying");
 			var w = $this.width();
 			var h = $this.height();
 			
-			if( w!=initialWidth || h!=initialHeight ) { execCallback(); console.log("font_loaded"); }
-			if(verifyDone==true) { clearInterval(verify_interval); console.log("interval_cleared"); }
+			if( w!=initialWidth || h!=initialHeight ) { execCallback(); }
+			if(verifyDone==true) { clearInterval(verify_interval); }
 			
 		}, settings.verify_interval);
 		
 		$(window).load(function() {
-			console.log("window_loaded");
 			execCallback();
 		});
 		
