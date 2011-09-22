@@ -1,7 +1,7 @@
 /**
  * Plugin que verifica se uma fonte foi carregada
  * @author André Gumieri
- * @version 1.0
+ * @version 1.0.1
  */
 (function($) {
 	$.fn.fontLoaded = function(options, callback) {
@@ -16,6 +16,8 @@
 		
 	
 		var $this = $(this).eq(0);
+		var original_font = $this.css("font-family")
+		$this.css("font-family", "sans-serif");
 		var initialWidth = $this.width();
 		var initialHeight = $this.height();
 		var verifyDone = false;
@@ -41,6 +43,6 @@
 		$(window).load(function() {
 			execCallback();
 		});
-		
+		$this.css("font-family", original_font);
 	}
 })(jQuery)
