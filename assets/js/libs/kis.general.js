@@ -16,4 +16,4 @@ var KisGeneral = {
 		}
 		return string;
 	}
-}
+};

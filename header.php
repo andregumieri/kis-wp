@@ -2,7 +2,18 @@
 <html>
 <head>
 	<title><?php bloginfo("name"); ?> - <?php bloginfo("description"); ?></title>
-	<link rel="stylesheet" type="text/css" media="all" href="<?php bloginfo( 'stylesheet_url' ); ?>" />
+	
+	<?php
+	$css = array();
+	$css[] = "style.css"; // Estilo padrão do wordpress
+	// $css[] = "assets/fonts/stylesheet.css";  // Folha de estilo adicional
+	
+	kis_minify($css, "css", kis_is_dev_enviroment());
+	// Parametro 1 - Array com os arquivos que devem ser carregados
+	// Parametro 2 - Tipo de carregamento (css ou js)
+	// Parametro 3 - Boolean: True para debug mode (mostra os arquivos chamada por chamada, sem unificar);
+	?>
+	
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>" />
 	<?php wp_head(); ?>
