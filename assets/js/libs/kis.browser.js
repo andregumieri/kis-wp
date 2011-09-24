@@ -82,4 +82,4 @@ var KisBrowser = {
 	}
 	
 	
-}
+};
