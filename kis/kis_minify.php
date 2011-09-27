@@ -5,7 +5,7 @@
  * Functions with prime objective to minify javascript and css files
  *
  * @author André Gumieri
- * @version 1.0
+ * @version 1.1
  *
  * @package KIS
  * @subpackage Minify
@@ -53,7 +53,6 @@ function kis_minify($items, $type='css', $debug=false) {
 				if($type=="css") {
 					$url_base = kis_get_theme_url();
 					preg_match_all('/url\([A-z.\/ \'"-_#\?]*\)/', $tmp_content, $out, PREG_PATTERN_ORDER);
-					//echo "<pre>";
 					foreach($out[0] as $o){
 						$item_path_arr = explode("/", $item);
 						$item_path = "";
@@ -64,17 +63,11 @@ function kis_minify($items, $type='css', $debug=false) {
 						$new_o = kis_minify_fix_css_url_path(kis_get_theme_url(), $item_path, $o) . "\n";
 						$tmp_content = str_replace($o, $new_o, $tmp_content);
 					}
-					
-
-					//print_r($out);
-					//echo "</pre>";
-					//die();
 					$tmp_content = kis_minify_compress_css($tmp_content);
 				}
 				$minify_content .= $tmp_content;
 				$minify_content .= "\n\n";
 			}
-			//die();
 			file_put_contents($path."/".$minify_name, $minify_content);
 		}
 		echo kis_minify_create_tag($type, kis_get_files_url("minify")."/".$minify_name);
@@ -129,7 +122,7 @@ function kis_minify_compress_css($buffer) {
  * Fix the path for URL tags
  *
  * @author André Gumieri
- * @since 1.0
+ * @since 1.1
  *
  * @param string $prefix - Prefix of the new URL
  * @param string $root - Root of the CSS file
@@ -137,7 +130,6 @@ function kis_minify_compress_css($buffer) {
  * @return string - compressed css content.
  */
 function kis_minify_fix_css_url_path($prefix, $root, $url_line) {
-
 	if(substr($prefix, -1)!="/") $prefix .= "/";
 	if(substr($root, -1)=="/") $root = substr($root, 0,-1);
 	$root_arr = explode("/", $root);
@@ -157,7 +149,6 @@ function kis_minify_fix_css_url_path($prefix, $root, $url_line) {
 		if(substr($url, -1)=="/") $url = substr($url, 0,-1);
 		$url_arr = explode("/", $url);
 		
-		//print_r($root_arr);
 		$back = 0;
 		$url_new_arr = array();
 		foreach($url_arr as $u) {
@@ -166,7 +157,7 @@ function kis_minify_fix_css_url_path($prefix, $root, $url_line) {
 		}
 		
 		$url_new = "";
-		for($x=$back; $x<count($root_arr); $x++) {
+		for($x=0; $x<(count($root_arr)-$back); $x++) {
 			$url_new .= "/".$root_arr[$x];
 		}
 		$url_new = $url_new . "/" . implode("/", $url_new_arr);
