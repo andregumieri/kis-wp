@@ -5,7 +5,7 @@
  * Functions with prime objective to minify javascript and css files
  *
  * @author André Gumieri
- * @version 1.1
+ * @version 1.2
  *
  * @package KIS
  * @subpackage Minify
@@ -122,7 +122,7 @@ function kis_minify_compress_css($buffer) {
  * Fix the path for URL tags
  *
  * @author André Gumieri
- * @since 1.1
+ * @since 1.2
  *
  * @param string $prefix - Prefix of the new URL
  * @param string $root - Root of the CSS file
@@ -133,39 +133,47 @@ function kis_minify_fix_css_url_path($prefix, $root, $url_line) {
 	if(substr($prefix, -1)!="/") $prefix .= "/";
 	if(substr($root, -1)=="/") $root = substr($root, 0,-1);
 	$root_arr = explode("/", $root);
+	$return = "";
+	
+	$arr_url_line = explode(",", $url_line);
 
-	if(strpos($url_line, "url")==0){
-		$abre = strpos($url_line, "(")+1;
-		$fecha = strpos($url_line, ")");
-		$url = substr($url_line, $abre, ($fecha-$abre));
-		$url = str_replace(array("'", "\""), "", $url);
-		
-		// Calcula o novo path
-		if(substr($root,0,1)=="/") {
-			// Retorna a string original se a URL começa com barra
-			return $url_line;
+	foreach($arr_url_line as $i_url_line) {
+		$url_line = trim($i_url_line);
+		if(strpos($url_line, "url")==0){
+			$abre = strpos($url_line, "(")+1;
+			$fecha = strpos($url_line, ")");
+			$url = substr($url_line, $abre, ($fecha-$abre));
+			$url = str_replace(array("'", "\""), "", $url);
+			
+			// Calcula o novo path
+			if(substr($root,0,1)=="/") {
+				// Retorna a string original se a URL começa com barra
+				return $url_line;
+			}
+			
+			if(substr($url, -1)=="/") $url = substr($url, 0,-1);
+			$url_arr = explode("/", $url);
+			
+			$back = 0;
+			$url_new_arr = array();
+			foreach($url_arr as $u) {
+				if($u=="..") $back++;
+				else $url_new_arr[] = $u;
+			}
+			
+			$url_new = "";
+			for($x=0; $x<(count($root_arr)-$back); $x++) {
+				$url_new .= "/".$root_arr[$x];
+			}
+			$url_new = $url_new . "/" . implode("/", $url_new_arr);
+			$url_new = $prefix.substr($url_new, 1);
+			$return .= ",".str_replace($url, $url_new, $url_line);
+		} else {
+			$return .= ",".$url_line;
 		}
-		
-		if(substr($url, -1)=="/") $url = substr($url, 0,-1);
-		$url_arr = explode("/", $url);
-		
-		$back = 0;
-		$url_new_arr = array();
-		foreach($url_arr as $u) {
-			if($u=="..") $back++;
-			else $url_new_arr[] = $u;
-		}
-		
-		$url_new = "";
-		for($x=0; $x<(count($root_arr)-$back); $x++) {
-			$url_new .= "/".$root_arr[$x];
-		}
-		$url_new = $url_new . "/" . implode("/", $url_new_arr);
-		$url_new = $prefix.substr($url_new, 1);
-		return str_replace($url, $url_new, $url_line);
-	} else {
-		return $url_line;
 	}
+	
+	return substr($return,1);
 	
 }
 
