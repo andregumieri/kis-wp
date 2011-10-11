@@ -1,3 +1,10 @@
+/**
+ * Classe com funções do Analytics
+ *
+ * @version 1.0.1
+ * @author André Gumieri
+ */
+ 
 if(!window['Kis']) { var Kis={} }
 (function(namespace) {
 	namespace.Analytics = {
@@ -10,7 +17,7 @@ if(!window['Kis']) { var Kis={} }
 		},
 		
 		pageView: function(page) {
-			this.gaq().push(['_trackPageview', page]);
+			this.gag().push(['_trackPageview', page]);
 		} 
 	}
 })(Kis);
