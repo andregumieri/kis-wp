@@ -1,7 +1,7 @@
 /**
  * Classe com funções para strings
  *
- * @version 1.0
+ * @version 1.0.1
  */
 
 var KisStrings = {
@@ -15,6 +15,7 @@ var KisStrings = {
 	 * @return string: Nova string substituida
 	 */
 	truncate : function(string, size, strtruncate) {
+		var sizeOriginal = size;
 		if(string.length<=size) {
 			return string;
 		}
@@ -28,9 +29,6 @@ var KisStrings = {
 		}
 		
 		var ultimoCaractere = string.substr(size-1,1);
-		if(validaCaractereFinal(ultimoCaractere)==true) {
-			return string;
-		}
 		
 		var proximoCaractere = string.substr(size,1); // Caractere que vem logo após o truncate da string
 		var encontrado = validaCaractereFinal(proximoCaractere);
