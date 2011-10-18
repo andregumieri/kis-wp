@@ -382,7 +382,7 @@ function kis_cpt_save_post() {
 function kis_cpt_admin_scripts() {
 	wp_enqueue_script('media-upload');
 	wp_enqueue_script('thickbox');
-	wp_register_script('kis_cpt', get_bloginfo("template_directory").'/kis/assets/kis_cpt.js', array('jquery','media-upload','thickbox'));
+	wp_register_script('kis_cpt', get_bloginfo("template_directory").'/kis/kis_cpt/default.js', array('jquery','media-upload','thickbox'));
 	wp_enqueue_script('kis_cpt');
 }
 
