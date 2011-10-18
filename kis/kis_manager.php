@@ -5,7 +5,7 @@
  * Funções para facilitar a criação de um painel de administração de tema
  *
  * @author André Gumieri
- * @version 1.0
+ * @version 1.0.1
  *
  * @package KIS
  * @subpackage Manager
@@ -19,7 +19,7 @@ $kis_manager = array();
  * Cria uma nova tela de administração
  *
  * @author André Gumieri
- * @since 0.1
+ * @since 1.0
  *
  * @param $slug - Slug da tela
  * @param $titulo - Título do tela
@@ -51,7 +51,7 @@ function kis_manager_add($slug, $titulo, $local='themes', $role="administrator")
  * Cria um novo painel de administração de tema
  *
  * @author André Gumieri
- * @since 0.1
+ * @since 1.0
  *
  * @param $slug - Slug do Painel
  * @param $titulo - Título do Painel
@@ -80,7 +80,7 @@ function kis_manager_add_panel($menu_slug, $slug, $titulo) {
  * Cria um novo painel de administração de tema
  *
  * @author André Gumieri
- * @since 0.1
+ * @since 1.0
  *
  * @param $menu_slug - Slug do menu
  * @param $painel_slug - Slug do painel
@@ -383,6 +383,8 @@ function kis_manager_admin_menu_callback() {
 							$opcao_checada = true;
 						}
 					}
+					
+					$f_value = str_replace(array("\\\"", "\\'"), array("\"", "'"), $f_value);
 					
 					//function kis_manager_make_input($name, $type, $value="", $values=array()) {
 					$paineis .= "<td>" . kis_manager_make_input($opcao['id'], $opcao['tipo'], $f_value, $opcao['valores'], $opcao_checada) . "</td>";
