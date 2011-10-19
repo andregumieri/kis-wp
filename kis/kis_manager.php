@@ -5,7 +5,7 @@
  * Funções para facilitar a criação de um painel de administração de tema
  *
  * @author André Gumieri
- * @version 1.0.2
+ * @version 1.0.3
  *
  * @package KIS
  * @subpackage Manager
@@ -449,10 +449,20 @@ function kis_manager_admin_menu_callback() {
   * @return none.
   */
 function kis_manager_admin_scripts() {
-	wp_enqueue_script('media-upload');
-	wp_enqueue_script('thickbox');
-	wp_register_script('kis_manager', get_bloginfo("template_directory").'/kis/kis_manager/default.js', array('jquery','media-upload','thickbox'));
-	wp_enqueue_script('kis_manager');
+	global $pagenow, $kis_manager;
+	$pageget = $_GET['page'];
+	$show_scripts = false;
+	
+	foreach($kis_manager as $km): if( $pagenow==kis_manager_parse_local($km['local']) && $pageget==$km['slug'] ): 
+		$show_scripts = true;
+	endif; endforeach;
+	
+	if($show_scripts) {
+		wp_enqueue_script('media-upload');
+		wp_enqueue_script('thickbox');
+		wp_register_script('kis_manager', get_bloginfo("template_directory").'/kis/kis_manager/default.js', array('jquery','media-upload','thickbox'));
+		wp_enqueue_script('kis_manager');
+	}
 }
 
 
