@@ -39,12 +39,14 @@
 			}
 		});
 		
-		window.send_to_editor = function(html) {
-			imgurl = $('img',html).attr('src');
-			
-			var field_id = $("a.kis_manager_upload_btn_clicado").data("ref-field");
-			$("#"+field_id).val(imgurl);
-			tb_remove();
+		if($("a.kis_manager_upload_btn").is("*")) {
+			window.send_to_editor = function(html) {
+				imgurl = $('img',html).attr('src');
+				
+				var field_id = $("a.kis_manager_upload_btn_clicado").data("ref-field");
+				$("#"+field_id).val(imgurl);
+				tb_remove();
+			}
 		}
 	});
 })(jQuery);
