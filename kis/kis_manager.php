@@ -5,13 +5,14 @@
  * Funções para facilitar a criação de um painel de administração de tema
  *
  * @author André Gumieri
- * @version 1.0.1
+ * @version 1.0.2
  *
  * @package KIS
  * @subpackage Manager
  */
 
 $kis_manager = array();
+$kis_manager_prefix = "kis_manager_";
 
 
 /**
@@ -75,6 +76,27 @@ function kis_manager_add_panel($menu_slug, $slug, $titulo) {
 }
 
 
+
+/**
+ * kis_manager_get()
+ * Pega uma opção salva pelo painel
+ *
+ * @author André Gumieri
+ * @since 1.0.2
+ *
+ * @param $option - Nome da opção que deve ser resgatada
+ *
+ * @return string com o valor da opção.
+ */
+function kis_manager_get($option) {
+	global $kis_manager_prefix;
+	$f_value = get_option($kis_manager_prefix.$option);
+	$f_value = str_replace(array("\\\"", "\\'"), array("\"", "'"), $f_value);
+	return $f_value;
+}
+
+
+
 /**
  * kis_manager_add_option()
  * Cria um novo painel de administração de tema
@@ -94,9 +116,9 @@ function kis_manager_add_panel($menu_slug, $slug, $titulo) {
  * @return none.
  */
 function kis_manager_add_option($menu_slug, $painel_slug, $id, $titulo, $tipo="text", $grupo_titulo="", $default="", $valores=array()) {
-	global $kis_manager;
+	global $kis_manager,$kis_manager_prefix;
 	
-	$id = "kis_manager_".$id;
+	$id = $kis_manager_prefix.$id;
 	
 	// Se não existir o menu
 	if(!isset($kis_manager[$menu_slug]['paineis'][$painel_slug])) trigger_error("[KIS Manager] Não foi encontrado o painel com nome {$painel_slug}", E_USER_ERROR);
