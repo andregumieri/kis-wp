@@ -1,7 +1,7 @@
 /**
  * Classe com funções de navegação
  *
- * @version 2.0
+ * @version 2.1
  *
  * @package Kis
  * @subpackage Browser
@@ -28,6 +28,49 @@ if(!window['Kis']) { var Kis={} }
 			} else {
 				return false;
 			}
+		},
+		
+		/**
+		 * startMonitoringActiveWindow()
+		 *
+		 * Inicia o monitoramento de janela ativa
+		 * @author André Gumieri
+		 * @since 1.2
+		 * 
+		 */				
+		startMonitoringActiveWindow: function() {
+			var self = this;
+			function onBlur() {
+				self.isWindowActiveControl = false;
+				//document.body.className = 'blurred';
+			};
+			function onFocus(){
+				self.isWindowActiveControl = true;
+				//document.body.className = 'focused';
+			};
+			
+			if (/*@cc_on!@*/false) { // check for Internet Explorer
+				document.onfocusin = onFocus;
+				document.onfocusout = onBlur;
+			} else {
+				window.onfocus = onFocus;
+				window.onblur = onBlur;
+			}
+		},
+		
+
+		/**
+		 * isWindowActive()
+		 *
+		 * Funções para saber se a janela está ativa ou inativa
+		 * @author André Gumieri
+		 * @since 1.2
+		 * 
+		 * @return bool: TRUE para janela ativa, FALSE para janela inativa
+		 */
+		isWindowActiveControl: true,
+		isWindowActive: function() {
+			return this.isWindowActiveControl;
 		},
 		
 	
