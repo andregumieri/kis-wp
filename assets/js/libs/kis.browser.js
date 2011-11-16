@@ -1,7 +1,7 @@
 /**
  * Classe com funções de navegação
  *
- * @version 2.1
+ * @version 2.2
  *
  * @package Kis
  * @subpackage Browser
@@ -132,6 +132,38 @@ if(!window['Kis']) { var Kis={} }
 			}
 			
 			return viewportheight;
-		}
+		},
+		
+		
+		
+		/**
+		 * isIDevice()
+		 *
+		 * Função que detecta se é um dispositivo iOS
+		 *
+		 * @author André Gumeiri <andregumieri@gmail.com>
+		 * @since 2.1
+		 * 
+		 * @param tryDevice - Dispositivo que deve ser testado (ipad, ipod, iphone)
+		 *
+		 * @return: tryDevice=null -> TRUE se for qualquer iOS // tryDevice=[ipad|ipod|iphone] -> TRUE se for o device preenchido
+		 */
+		 isIDevice: function(tryDevice) {
+		 	if(typeof(tryDevice)=="undefined") {
+		 		if( navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPod/i) ) {
+					return true;
+		 		}	
+		 	} else {
+		 		var tryMatch = null;
+		 		if(tryDevice.toLowerCase()=="iphone") { tryMatch=/\(iPhone/i; }
+		 		if(tryDevice.toLowerCase()=="ipad") { tryMatch=/\(iPad/i; }
+		 		if(tryDevice.toLowerCase()=="ipod") { tryMatch=/\(iPod/i; }
+
+		 		if( navigator.userAgent.match(tryMatch) ) {
+		 			return true;
+		 		}
+		 	}
+		 	return false;
+		 }
 	}
 })(Kis);
