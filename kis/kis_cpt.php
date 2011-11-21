@@ -5,7 +5,7 @@
  * Functions to made easy the creation of custom post type in Wordpress.
  *
  * @author André Gumieri
- * @version 0.1
+ * @version 0.2
  *
  * @package KIS
  * @subpackage Minify
@@ -39,7 +39,8 @@ function kis_cpt_register($slug, $plural, $singular, $supports=array()) {
 			"plural" => $plural,
 			"singular" => $singular,
 			"supports" => $supports,
-			"meta-boxes" => array()
+			"meta-boxes" => array(),
+			"taxonomy" => array()
 		);
 	} else {
 		trigger_error("[KIS CPT] o CPT com slug '{$slug}' já foi registrado", E_USER_ERROR);
@@ -141,6 +142,45 @@ function kis_cpt_add_field($cpt_slug, $mb_slug, $name, $label, $type="text", $de
 		trigger_error("[KIS CPT] A meta box '{$cpt_slug}: {$mb_slug}' não está registrada. Impossível adicionar o campo {$name}", E_USER_WARNING);
 		
 	}
+}
+
+
+/**
+  * kis_cpt_add_taxonomy()
+  * Adiciona taxonomia (categorias ou tags) 
+  *
+  * @author André Gumieri
+  * @since 0.1
+  *
+  * @param $cpt_slug (string) - Slug do CPT
+  * @param $slug (string) - Slug da taxonomia (plural)
+  * @param $singular (string) - Titulo da taxonomia no singular
+  * @param $plural (string) - Título da taxonomia no plural
+  * @param $type (string) - Tipo da taxonomia ('category', 'tag'). Default: 'category'
+  * @param $rewrite (string) - URL Rewrite (true, false). Default: false
+  *
+  * @return none.
+  */
+function kis_cpt_add_taxonomy($cpt_slug, $slug, $singular, $plural, $type="category", $rewrite=false ) {
+	global $kis_cpt;
+	if( isset($kis_cpt[$cpt_slug]['taxonomy'][$slug]) ) {
+		trigger_error("[KIS CPT] A taxonomia '{$cpt_slug}: {$slug}' já está registrada.", E_USER_WARNING);
+		return false;
+	}
+	
+	if($type=="category") $type = true;
+	else $type=false;
+	
+	$kis_cpt[$cpt_slug]['taxonomy'][$slug] = array(
+		"slug" => $slug,
+		"singular" => $singular,
+		"plural" => $plural,
+		"hierarchical" => $type,
+		"rewrite" => $rewrite
+	);
+	
+	//taxonomy$_COOKIE
+	
 }
 
 
@@ -302,7 +342,11 @@ function kis_cpt_init() {
 	     );
 	
 		register_post_type( $slug , $args );
-		
+		if(!empty($options['taxonomy'])) {
+			foreach($options['taxonomy'] as $t) {
+				register_taxonomy($t['slug'], array($slug), array("hierarchical" => $t['hierarchical'], "label" => $t['plural'], "singular_label" => $t['singular'], "rewrite" => $t['rewrite']));
+			}
+		}
 	endforeach;
 }
 
