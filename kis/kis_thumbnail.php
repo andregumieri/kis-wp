@@ -5,7 +5,7 @@
  * Related thumbnails functions
  *
  * @author André Gumieri
- * @version 1.1.1
+ * @version 1.1.2
  *
  * @package KIS
  * @subpackage Thumbnail
@@ -42,17 +42,17 @@ function kis_thumbnail_get_url($post_id, $size='original') {
  *
  * @author André Gumieri
  * @since 1.1
- * @version 1.1
+ * @version 1.2
  *
  * @param int $post_id O ID do post que contem o thumbnail
  * @param int $w A largura do crop
  * @param int $h A altura do crop
  * @param string $returnType - Tipo de retorno. tag: Tag imagem, url: URL da imagem.
- * @param string $alt - Texto alternativo da imagem (Apenas para retorno de tag)
+ * @param string $tag_attrs - Array com atributos e valores para adicionar à tag. array("atributo" => "Valor do attr", "alt"=>"Texto alternativo");
  *
  * @return mixed URL ou TAG do thumb cropado ou FALSE caso o post não tenha thumb.
  */
-function kis_thumbnail_crop($post_id, $w, $h, $returnType="url", $alt="") {
+function kis_thumbnail_crop($post_id, $w, $h, $returnType="url", $tag_attrs=array()) {
 	global $wpdb;
 	$id = get_post_thumbnail_id($post_id);
 	if(empty($id)) return false;
@@ -89,7 +89,9 @@ function kis_thumbnail_crop($post_id, $w, $h, $returnType="url", $alt="") {
 		}
 		
 		if($returnType=="tag") {
-			$txtalt = $alt;
+			$txtalt = "";
+			if(isset($tag_attrs['alt'])) $txtalt = $tag_attrs['alt'];
+			
 			if(empty($txtalt)) {
 				$wpalt = $wpdb->get_results("SELECT `meta_value` FROM `{$wpdb->prefix}postmeta` WHERE `post_id`='{$id}' AND `meta_key`='_wp_attachment_image_alt'");
 				if(!empty($wpalt)) $txtalt = $wpalt[0]->meta_value;
@@ -99,7 +101,12 @@ function kis_thumbnail_crop($post_id, $w, $h, $returnType="url", $alt="") {
 				$txtalt = " alt=\"{$txtalt}\"";
 			}
 			
-			return "<img src=\"" . WP_CONTENT_URL . "/kis_crops/{$newName}" . "\" width=\"{$w}\" height=\"{$h}\"{$txtalt} />";
+			$attrs = "";
+			foreach($tag_attrs as $attr=>$valor) {
+				if($attr!="alt") $attrs .= " {$attr}=\"{$valor}\"";
+			}
+			
+			return "<img src=\"" . WP_CONTENT_URL . "/kis_crops/{$newName}" . "\" width=\"{$w}\" height=\"{$h}\"{$txtalt}{$attrs} />";
 		} else {
 			return WP_CONTENT_URL . "/kis_crops/{$newName}";
 		}
