@@ -5,7 +5,7 @@
  * Related thumbnails functions
  *
  * @author André Gumieri
- * @version 1.1
+ * @version 1.1.1
  *
  * @package KIS
  * @subpackage Thumbnail
@@ -42,14 +42,17 @@ function kis_thumbnail_get_url($post_id, $size='original') {
  *
  * @author André Gumieri
  * @since 1.1
+ * @version 1.1
  *
  * @param int $post_id O ID do post que contem o thumbnail
  * @param int $w A largura do crop
  * @param int $h A altura do crop
+ * @param string $returnType - Tipo de retorno. tag: Tag imagem, url: URL da imagem.
+ * @param string $alt - Texto alternativo da imagem (Apenas para retorno de tag)
  *
- * @return mixed URL do thumb cropado ou FALSE caso o post não tenha thumb.
+ * @return mixed URL ou TAG do thumb cropado ou FALSE caso o post não tenha thumb.
  */
-function kis_thumbnail_crop($post_id, $w, $h) {
+function kis_thumbnail_crop($post_id, $w, $h, $returnType="url", $alt="") {
 	global $wpdb;
 	$id = get_post_thumbnail_id($post_id);
 	if(empty($id)) return false;
@@ -85,7 +88,21 @@ function kis_thumbnail_crop($post_id, $w, $h) {
 			$imageManage->saveImage($imageManage->cropProportional($w, $h), WP_CONTENT_DIR . "/kis_crops/{$newName}");
 		}
 		
-		return WP_CONTENT_URL . "/kis_crops/{$newName}";
+		if($returnType=="tag") {
+			$txtalt = $alt;
+			if(empty($txtalt)) {
+				$wpalt = $wpdb->get_results("SELECT `meta_value` FROM `{$wpdb->prefix}postmeta` WHERE `post_id`='{$id}' AND `meta_key`='_wp_attachment_image_alt'");
+				if(!empty($wpalt)) $txtalt = $wpalt[0]->meta_value;
+			}
+			
+			if(!empty($txtalt)) {
+				$txtalt = " alt=\"{$txtalt}\"";
+			}
+			
+			return "<img src=\"" . WP_CONTENT_URL . "/kis_crops/{$newName}" . "\" width=\"{$w}\" height=\"{$h}\"{$txtalt} />";
+		} else {
+			return WP_CONTENT_URL . "/kis_crops/{$newName}";
+		}
 	} else {
 		return false;
 	}
