@@ -6,6 +6,8 @@ require("kis/kis_minify.php"); // Módulo para fazer minify de scripts e css
 require("kis/kis_string.php"); // Módulo com funções de strings
 require("kis/kis_thumbnail.php"); // Módulo de thumbnails do post
 
+// Adiciona suporte ao Post Thumbnail
+add_theme_support( 'post-thumbnails' ); 
 
 // Alguns Exemplos de uso das funções do KIS.
 // Apague esta linha e este arquivo quando for programar
