@@ -1,4 +1,2 @@
-/KIS: Wordpress.esproj/
-/.DS_Store
-/kis.esproj/
+*.esproj
 .DS_Store
