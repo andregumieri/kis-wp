@@ -5,7 +5,7 @@
  * Related thumbnails functions
  *
  * @author André Gumieri
- * @version 1.1.3
+ * @version 1.1.4
  *
  * @package KIS
  * @subpackage Thumbnail
@@ -42,7 +42,7 @@ function kis_thumbnail_get_url($post_id, $size='original') {
  *
  * @author André Gumieri
  * @since 1.1
- * @version 1.3
+ * @version 1.4
  *
  * @param int $post_id O ID do post que contem o thumbnail
  * @param int $w A largura do crop
@@ -60,7 +60,9 @@ function kis_thumbnail_crop($post_id, $w, $h, $returnType="url", $tag_attrs=arra
 	$att = $wpdb->get_results("SELECT `meta_value` FROM `{$wpdb->prefix}postmeta` WHERE `post_id`='{$id}' AND `meta_key`='_wp_attached_file'");
 	
 	if(!empty($att)) {
-		$att = WP_CONTENT_DIR . "/uploads/" . $att[0]->meta_value;
+		$upload_dir = wp_upload_dir();
+		
+		$att = $upload_dir['basedir']. "/" . $att[0]->meta_value;
 		$att_info = pathinfo($att);
 		
 		$extensao = $tipoArquivo = $att_info['extension'];
