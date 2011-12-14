@@ -5,7 +5,7 @@
  * Related thumbnails functions
  *
  * @author André Gumieri
- * @version 1.1.2
+ * @version 1.1.4
  *
  * @package KIS
  * @subpackage Thumbnail
@@ -42,7 +42,7 @@ function kis_thumbnail_get_url($post_id, $size='original') {
  *
  * @author André Gumieri
  * @since 1.1
- * @version 1.2
+ * @version 1.4
  *
  * @param int $post_id O ID do post que contem o thumbnail
  * @param int $w A largura do crop
@@ -60,7 +60,9 @@ function kis_thumbnail_crop($post_id, $w, $h, $returnType="url", $tag_attrs=arra
 	$att = $wpdb->get_results("SELECT `meta_value` FROM `{$wpdb->prefix}postmeta` WHERE `post_id`='{$id}' AND `meta_key`='_wp_attached_file'");
 	
 	if(!empty($att)) {
-		$att = WP_CONTENT_DIR . "/uploads/" . $att[0]->meta_value;
+		$upload_dir = wp_upload_dir();
+		
+		$att = $upload_dir['basedir']. "/" . $att[0]->meta_value;
 		$att_info = pathinfo($att);
 		
 		$extensao = $tipoArquivo = $att_info['extension'];
@@ -79,13 +81,14 @@ function kis_thumbnail_crop($post_id, $w, $h, $returnType="url", $tag_attrs=arra
 		
 		$newName = $att_info['filename']."_{$w}x{$h}_".md5($att).".{$extensao}";
 		
-		if(!file_exists(WP_CONTENT_DIR . "/kis_crops/")) {
-			mkdir(WP_CONTENT_DIR . "/kis_crops/", 0777);
-		}
-		if(!file_exists(WP_CONTENT_DIR . "/kis_crops/{$newName}")) {
+		// Pega o path de onde serão gravados os arquivos]
+		$path = kis_get_files_path("thumbnail/crops");
+		$path_url = kis_get_files_url("thumbnail/crops");
+
+		if(!file_exists($path . "/{$newName}")) {
 			$imageManage = new imageManage($att, $tipoArquivo);
 			
-			$imageManage->saveImage($imageManage->cropProportional($w, $h), WP_CONTENT_DIR . "/kis_crops/{$newName}");
+			$imageManage->saveImage($imageManage->cropProportional($w, $h), $path . "/{$newName}");
 		}
 		
 		if($returnType=="tag") {
@@ -106,9 +109,9 @@ function kis_thumbnail_crop($post_id, $w, $h, $returnType="url", $tag_attrs=arra
 				if($attr!="alt") $attrs .= " {$attr}=\"{$valor}\"";
 			}
 			
-			return "<img src=\"" . WP_CONTENT_URL . "/kis_crops/{$newName}" . "\" width=\"{$w}\" height=\"{$h}\"{$txtalt}{$attrs} />";
+			return "<img src=\"" . $path_url . "/{$newName}" . "\" width=\"{$w}\" height=\"{$h}\"{$txtalt}{$attrs} />";
 		} else {
-			return WP_CONTENT_URL . "/kis_crops/{$newName}";
+			return $path_url . "/{$newName}";
 		}
 	} else {
 		return false;
