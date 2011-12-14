@@ -41,7 +41,7 @@
 		
 		if($("a.kis_manager_upload_btn").is("*")) {
 			window.send_to_editor = function(html) {
-				imgurl = $('img',html).attr('src');
+				imgurl = $('img',"<div>"+html+"</div>").attr('src');
 				
 				var field_id = $("a.kis_manager_upload_btn_clicado").data("ref-field");
 				$("#"+field_id).val(imgurl);
