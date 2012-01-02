@@ -5,7 +5,7 @@
  * Functions to made easy the creation of custom post type in Wordpress.
  *
  * @author André Gumieri
- * @version 0.2
+ * @version 0.3
  *
  * @package KIS
  * @subpackage Minify
@@ -190,7 +190,7 @@ function kis_cpt_add_taxonomy($cpt_slug, $slug, $singular, $plural, $type="categ
   * Callback gerado por cada meta box no admin
   *
   * @author André Gumieri
-  * @since 0.1
+  * @since 0.2
   *
   * @return none.
   */
@@ -280,9 +280,22 @@ function kis_cpt_meta_box_callback($post, $args) {
 					$e .= " <a href=\"#\" class=\"kis_cpt_upload_btn\" data-ref-field=\"{$name}\">Alterar</a>";
 					$e .= " ou <a href=\"#\" class=\"kis_cpt_upload_remove_btn\" data-ref-field=\"{$name}\">Remover</a>";
 				}
-
+				break;
+			
+			case "hidden":
+				if(empty($value)) $value = $field['default'];
+				if(!empty($field['label'])) {
+					$e .= "<p><strong>{$field['label']}</strong></p>";
+				}
+				$e .= "<input type=\"hidden\" name=\"{$name}\" id=\"{$name}\" value=\"{$value}\" style=\"width: 80%;\" />";
 				break;
 				
+			case "label":
+				if(!empty($field['label'])) {
+					$e .= "<p><strong>{$field['label']}</strong></p>";
+				}
+				break;
+			
 			case "text": 
 			default:
 				if(empty($value)) $value = $field['default'];
