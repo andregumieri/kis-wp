@@ -5,7 +5,7 @@
  * Funções de redes sociais
  *
  * @author André Gumieri
- * @version 1.0
+ * @version 1.0.1
  *
  * @package KIS
  * @subpackage Social
@@ -91,7 +91,7 @@ function kis_social_facebook_like_button($url, $appId, $options=array()) {
  * Monta o share button do twitter
  *
  * @author André Gumieri
- * @since 1.0
+ * @since 1.0.1
  *
  * @param string $shareUrl URL da página que será dado o share. Se não especificado, pega a URL atual.
  * @param string $shareTexto Texto do que será compartilhado. Se não especificado, pega o título da página.
@@ -118,7 +118,7 @@ function kis_social_twitter_share_button($shareUrl="", $shareText="", $twitterUs
 		"textoBotao" => "Tweetar",
 		"echo" => true, 
 		"container" => false,
-		"container-class"=>"kis-social-facebook-like-button"
+		"container-class"=>"kis-social-twitter-share-button"
 	);
 	$settings = array_merge($settings, $options);
 	
