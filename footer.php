@@ -3,8 +3,8 @@
 	<?php 
 	/* Chamadas manuais de scripts vão aqui */
 	$js = array();
-	// $js[] = "assets/js/base.js";
-	// $js[] = "assets/js/classes/arquivo.class.js";
+	// $js[] = get_template_directory_uri()."assets/js/base.js";
+	// $js[] = get_template_directory_uri()."assets/js/classes/arquivo.class.js";
 	
 	kis_minify($js, "js", kis_is_dev_enviroment());
 	// Parametro 1 - Array com os arquivos que devem ser carregados
