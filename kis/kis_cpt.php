@@ -122,7 +122,6 @@ function kis_cpt_add_field($cpt_slug, $mb_slug, $name, $label, $type="text", $de
 	if( isset($kis_cpt[$cpt_slug]['meta-boxes'][$mb_slug]) ) {
 		
 		if( !isset($kis_cpt[$cpt_slug]['meta-boxes'][$mb_slug]['fields'][$name]) ) {
-	
 			$kis_cpt[$cpt_slug]['meta-boxes'][$mb_slug]['fields'][$name] = array(
 				"name" => $name,
 				"label" => $label,
@@ -410,19 +409,25 @@ function kis_cpt_admin_init() {
   * Ações para salvar o post
   *
   * @author André Gumieri
-  * @since 0.1
+  * @since 0.2
   *
   * @return none.
   */
 function kis_cpt_save_post() {
 	global $kis_cpt, $post;
+
 	$slug = $_POST['post_type'];
 	if(!empty($kis_cpt[$slug]['meta-boxes'])) {
 		foreach($kis_cpt[$slug]['meta-boxes'] as $mb_slug=>$mb) {
+		
 			// Passa por cada meta-box
 			foreach($mb['fields'] as $name=>$field) {
 				// Passa por cada campo
-				if(isset($_POST[$name])) update_post_meta($post->ID, $name, $_POST[$name]);
+				if( isset($_POST[$name]) ) {
+					update_post_meta($post->ID, $name, $_POST[$name]);
+				} elseif ($field['type']=="checkbox" && !isset($_POST[$name])) {
+					delete_post_meta($post->ID, $name);
+				}
 			}
 		}
 	}
