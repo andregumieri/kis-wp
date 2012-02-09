@@ -5,7 +5,7 @@
  * Functions to made easy the creation of custom post type in Wordpress.
  *
  * @author André Gumieri
- * @version 0.3
+ * @version 1.0
  *
  * @package KIS
  * @subpackage Minify
@@ -318,7 +318,7 @@ function kis_cpt_meta_box_callback($post, $args) {
   * Init the Custom Post Types
   *
   * @author André Gumieri
-  * @since 0.1
+  * @since 1.0
   *
   * @return none.
   */
@@ -326,38 +326,41 @@ function kis_cpt_init() {
 	global $kis_cpt;
 	
 	foreach($kis_cpt as $slug=>$options):
-	   $labels = array(
-	       'name' => _x($options['plural'], 'post type general name'),
-	       'singular_name' => _x($options['singular'], 'post type singular name'),
-	       'add_new' => _x('Novo', 'portfolio item'),
-	       'add_new_item' => __('Novo'),
-	       'edit_item' => __('Editar'),
-	       'new_item' => __('Novo'),
-	       'view_item' => __('Ver'),
-	       'search_items' => __('Procurar'),
-	       'not_found' =>  __('Nada encontrado'),
-	       'not_found_in_trash' => __('Nada encontrado na lixeira'),
-	       'parent_item_colon' => ''
-	   );
+		if($slug != "post" && $slug != "page" && $slug != "link") {
+			$labels = array(
+			   'name' => _x($options['plural'], 'post type general name'),
+			   'singular_name' => _x($options['singular'], 'post type singular name'),
+			   'add_new' => _x('Novo', 'portfolio item'),
+			   'add_new_item' => __('Novo'),
+			   'edit_item' => __('Editar'),
+			   'new_item' => __('Novo'),
+			   'view_item' => __('Ver'),
+			   'search_items' => __('Procurar'),
+			   'not_found' =>  __('Nada encontrado'),
+			   'not_found_in_trash' => __('Nada encontrado na lixeira'),
+			   'parent_item_colon' => ''
+			);
 	
-	   $args = array(
-	       'labels' => $labels,
-	       'public' => true,
-	       'publicly_queryable' => true,
-	       'show_ui' => true,
-	       'query_var' => true,
-	       /* 'menu_icon' => get_stylesheet_directory_uri() . '/article16.png', */
-	       'rewrite' => true,
-	       'capability_type' => 'post',
-	       'hierarchical' => false,
-	       'menu_position' => null,
-	       'supports' => $options['supports']
-	     );
+			$args = array(
+			   'labels' => $labels,
+			   'public' => true,
+			   'publicly_queryable' => true,
+			   'show_ui' => true,
+			   'query_var' => true,
+			   /* 'menu_icon' => get_stylesheet_directory_uri() . '/article16.png', */
+			   'rewrite' => true,
+			   'capability_type' => 'post',
+			   'hierarchical' => false,
+			   'menu_position' => null,
+			   'supports' => $options['supports']
+			 );
 	
-		register_post_type( $slug , $args );
-		if(!empty($options['taxonomy'])) {
-			foreach($options['taxonomy'] as $t) {
-				register_taxonomy($t['slug'], array($slug), array("hierarchical" => $t['hierarchical'], "label" => $t['plural'], "singular_label" => $t['singular'], "rewrite" => $t['rewrite']));
+			register_post_type( $slug , $args );
+		
+			if(!empty($options['taxonomy'])) {
+				foreach($options['taxonomy'] as $t) {
+					register_taxonomy($t['slug'], array($slug), array("hierarchical" => $t['hierarchical'], "label" => $t['plural'], "singular_label" => $t['singular'], "rewrite" => $t['rewrite']));
+				}
 			}
 		}
 	endforeach;
