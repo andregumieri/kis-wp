@@ -5,7 +5,7 @@
  * Funções de redes sociais
  *
  * @author André Gumieri
- * @version 1.0.1
+ * @version 1.1
  *
  * @package KIS
  * @subpackage Social
@@ -85,6 +85,93 @@ function kis_social_facebook_like_button($url, $appId, $options=array()) {
 		return $iframe;
 	}
 }
+
+
+
+/**
+ * Monta o like box do facebook
+ *
+ * @author André Gumieri
+ * @since 1.0
+ *
+ * @param mixed $fanpageUrl URL da fanpage que será dada a ação de like.
+ * @param mixed $appId ID do APP cadastrado no facebook.
+ * @param array $options Opções do plugin:
+ *		width: (int) Largura do iFrame do Facebook
+ *		height: (int) Altura do iFrame do Facebook
+ *		color: (string) [*light|dark] Estilo de cor do plugin
+ *		showFaces: (bool) [*TRUE|FALSE] Mostra as fotos das pessoas que curtiram
+ *		borderColor: (string) [Hexadecimal com #] Cor da borda do box do facebook. Formato: #FF9900
+ *		showStream: (bool) [TRUE|*FALSE] Mostra o stream do que foi postado na fanpage
+ *		showHeader: (bool) [TRUE|*FALSE] Mostra o header com o logo do Facebook
+ *		echo: (bool) [*TRUE|FALSE] True se for para dar echo no iframe, false se for para retornar na função
+ *		container: (mixed) [*FALSE|<div, span, section, …>] Se for false, não envolve em um container, se for uma tag, coloca no container
+ *		container-class: (string) Classe que será colocada no container
+ * @return (string) Tag do iFrame montada.
+ */
+function kis_social_facebook_like_box($fanpageUrl, $appId, $options=array()) {
+ 	$settings = array(
+ 		"width" => 292,
+ 		"height" => -1,
+ 		"color" => "light",
+ 		"showFaces" => true,
+ 		"borderColor" => "",
+ 		"showStream" => false,
+ 		"showHeader" => false,
+ 		"echo" => true, 
+ 		"container" => false,
+ 		"container-class"=>"kis-social-facebook-like-box"
+ 	);
+ 	
+ 	$sf = $settings['showFaces'];
+ 	$ss = $settings['showStream'];
+ 	$sh = $settings['showHeader'];
+ 	
+ 	// Se a altura estiver setada como -1 (default), coloca as alturas padrões do facebook.
+ 	if($settings['height'] == -1) {
+ 		if(!$sf && !$ss && !$sh) $settings['height'] = 62;
+ 		elseif($sf && !$ss && !$sh) $settings['height'] = 258;
+ 		elseif(!$sf && $ss && !$sh) $settings['height'] = 395;
+ 		elseif(!$sf && !$ss && $sh) $settings['height'] = 62;
+ 		elseif($sf && $ss && !$sh) $settings['height'] = 558;
+ 		elseif($sf && !$ss && $sh) $settings['height'] = 290;
+ 		elseif(!$sf && $ss && $sh) $settings['height'] = 427;
+ 		elseif($sf && $ss && $sh) $settings['height'] = 590;
+ 	}
+ 	unset($sf);
+ 	unset($ss);
+ 	unset($sh);
+ 	$settings = array_merge($settings, $options);
+ 	
+ 	// Monta o iFrame
+ 	$urlFacebook = "http://www.facebook.com/plugins/likebox.php";
+ 	
+ 	$urlIFrame = "{$urlFacebook}?href=" . urlencode($fanpageUrl);
+ 	$urlIFrame .= "&amp;width=" . $settings['width'];
+ 	$urlIFrame .= "&amp;height=" . $settings['height'];
+ 	$urlIFrame .= "&amp;colorscheme=" . $settings['color'];
+ 	$urlIFrame .= "&amp;show_faces=" . $settings['showFaces'];
+ 	if(!empty($settings['borderColor'])) $urlIFrame .= "&amp;border_color=" . urlencode($settings['borderColor']);
+ 	else $urlIFrame .= "&amp;border_color";
+ 	$urlIFrame .= "&amp;stream=" . $settings['showStream'];
+ 	$urlIFrame .= "&amp;header=" . $settings['showHeader'];
+ 	$urlIFrame .= "&amp;appId=" . $appId;
+ 	
+ 	$iframe = '<iframe src="' . $urlIFrame . '" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:' . $settings['width'] . 'px; height:' . $settings['height'] . 'px;" allowTransparency="true"></iframe>';
+ 	
+ 	if($settings['container']!==false) {
+ 		$classeContainer = "";
+ 		if(!empty($settings['container-class'])) $classeContainer = " class=\"{$settings['container-class']}\"";
+ 		$iframe = "<" . $settings['container'] . $classeContainer . ">" . $iframe . "</" . $settings['container'] . ">";
+ 	}
+ 	
+ 	if($settings['echo']) {
+ 		echo $iframe;
+ 	} else {
+ 		return $iframe;
+ 	}
+}
+ 
 
 
 /**
