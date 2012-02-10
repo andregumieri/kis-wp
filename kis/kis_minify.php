@@ -12,6 +12,98 @@
  */
  
  
+ 
+ function kis_minify_print_css_on_header() {
+ 	//if(kis_is_dev_enviroment()) {
+ 	global $wp_styles;
+ 	
+ 	// Minify do CSS
+ 	$css = array();
+ 	foreach($wp_styles->queue as $q) {
+ 		$css[] = $wp_styles->registered[$q]->src;
+ 	}
+ 	$wp_styles->queue = array();
+ 	$novoCSS = kis_minify($css, 'css', false, false, true);
+ 	
+ 	wp_register_style('kis_minify_new_header_css', $novoCSS);
+ 	wp_enqueue_style('kis_minify_new_header_css');
+ }
+ 
+ function kis_minify_print_js_on_header() {
+ 	global $wp_scripts;
+ 	echo "wp_print_scripts ";
+ //print_r($wp_scripts);
+ 	// Minify do JS
+ 	$js = array();
+ 	$queue_notin = array();
+ 	//print_r($wp_scripts->queue);
+ 	foreach($wp_scripts->queue as $q) {
+ 		if($wp_scripts->registered[$q]->extra['group']==$wp_scripts->group) {
+ 			$js[] = $wp_scripts->registered[$q]->src;
+ 			echo "wp_dequeue_script({$q}); ";
+ 			wp_dequeue_script($q);
+ 		}
+ 	}
+ 	
+ 	//$wp_scripts->queue = $queue_notin;
+ 	//print_r($wp_scripts->queue); die();
+ 	$novoJS = kis_minify($js, 'js', false, false, true);
+ 	
+ 	wp_register_script('kis_minify_new_header_js', $novoJS, false, false, false);
+ 	wp_enqueue_script('kis_minify_new_header_js');
+ }
+ 
+ function kis_minify_print_js_on_footer() {
+ 	global $wp_scripts, $wp_styles;
+ 	echo "<strong>wp_print_footer_scripts</strong> ";
+ 	//print_r($wp_scripts);
+ 	//print_r($wp_styles);
+ 	//die();
+ }
+ //add_action( 'wp_print_styles', 'kisMinifyOnPrintStyle' );
+ //add_action( 'wp_print_styles', 'kis_minify_print_css_on_header');
+ 
+ function kis_wp_footer() {
+ 	echo "<strong>wp_footer</strong> ";
+ }
+ 
+ function kis_wp_head() {
+ 	echo "<strong>wp_head</strong> ";
+ 	//global $wp_scripts;
+ 	//print_r($wp_scripts);
+ }
+ 
+ add_action( 'wp_head', 'kis_wp_head' );
+ add_action( 'wp_print_scripts', 'kis_minify_print_js_on_header');
+ add_action( 'wp_print_footer_scripts', 'kis_minify_print_js_on_footer');
+ add_action( 'wp_footer', 'kis_wp_footer' );
+
+
+/**
+ * kis_minify_add()
+ * Adiciona os scripts para minify
+ * @param string $paths - Array com os caminhos relativos à raiz do tema
+ * @param string $type - Tipo de arquivo (js or css)
+ * @param mixed $deps - array com dependencias
+ * @param mixed $in_footer - Colocar script no footer (js)
+ * @param mixed $ver - Versao do arquivo
+ * @param mixed $media - Tipo de midia (css)
+ */
+function kis_minify_add($path, $type, $deps=false, $in_footer = true, $ver=false, $media=false) {
+	if($type == "css") {
+		$name = basename($path, ".css");
+		wp_register_style('kis_minify_add_css_'.$name, get_template_directory_uri()."/".$path, $deps, $ver, $media);
+		wp_enqueue_style('kis_minify_add_css_'.$name);
+	} elseif( $type == "js" ) {
+		$name = basename($path, ".js");
+		wp_register_script('kis_minify_add_js_'.$name, get_template_directory_uri()."/".$path, $deps, $ver, $in_footer);
+		wp_enqueue_script('kis_minify_add_js_'.$name);
+	}
+	
+	return false;
+}
+ 
+ 
 /**
  * kis_minify()
  * Join all files into only one call
