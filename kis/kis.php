@@ -2,9 +2,17 @@
 /**
  * Kis
  * @since 11/08/2011
- * @version 1.1
+ * @version 1.2
  * @author André Gumieri - andregumieri@gmail.com
  */
+ 
+ 
+/**
+ * Registra as Libs JS do KIS
+ * @author André Gumieri
+ * @version 1.0
+ */
+wp_register_script("kislibs_kis_general", get_bloginfo("template_directory")."/kis/libs/js/kis.general.js", "2.0", true);
 
 
 /**
