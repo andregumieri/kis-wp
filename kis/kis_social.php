@@ -5,7 +5,7 @@
  * Funções de redes sociais
  *
  * @author André Gumieri
- * @version 1.1
+ * @version 1.2
  *
  * @package KIS
  * @subpackage Social
@@ -235,5 +235,158 @@ function kis_social_twitter_share_button($shareUrl="", $shareText="", $twitterUs
 		return $button;
 	}
 }
+
+
+
+/**
+ * Monta o twitter feed
+ *
+ * @author André Gumieri
+ * @since 1.0
+ *
+ * @param string $twitterUser Usuário que será resgatado o feed.
+ * @param string $qty Quantidade de tweets retornados. Default: 5
+ * @param array $options Opções do plugin:
+ *		classeAdicional: (string) Classes adicionais para o container
+ *		containerId: (string) ID do container
+ *		echo: (bool) [*TRUE|FALSE] True se for para dar echo no iframe, false se for para retornar na função
+ * @return (string) Tags do feed montadas.
+ */
+$_kis_social_twitter_feed = array();
+$_kis_social_twitter_nonce = "";
+function kis_social_twitter_feed($twitterUser, $qty=5, $options=array()) {
+	global $_kis_social_twitter_feed, $_kis_social_twitter_nonce;
+ 	$settings = array(
+ 		"classeAdicional" => "",
+ 		"containerId" => "",
+ 		"echo" => true
+ 		
+ 	);
+ 	$settings = array_merge($settings, $options);
+ 	
+ 	// Registra e chama o script social do twitter
+ 	wp_register_script("kis_social_twitter_feed_js", get_bloginfo("template_directory")."/kis/kis_social/kis.social.twitter.js", array("jquery", "kislibs_kis_general"), "1.0", true);
+ 	wp_enqueue_script("kis_social_twitter_feed_js");
+
+	// determina as classes adicionais
+	$classes = "";
+	if(!empty($settings['classeAdicional'])) {
+		$classes = " {$settings['classeAdicional']}";
+	}
+ 	
+ 	// determina o ID do container
+ 	$id = "kis_social_twitter_feed_" . uniqid("");
+ 	if(!empty($settings['containerId'])) {
+ 		$id = $settings['containerId'];
+ 	}
+ 	
+ 	
+ 	$saida = "";
+ 	$saida .= "<div class=\"kis_social_twitter_feed{$classes}\" id=\"{$id}\"></div>\n";
+
+	// Se for a primeira passagem, adiciona as actions
+	if(empty($_kis_social_twitter_feed)) {
+		$_kis_social_twitter_nonce = wp_create_nonce('kis_social_twitter_feed');
+		add_action('wp_print_footer_scripts', '_kis_social_twitter_feed_print_script_on_footer');
+	}
+	
+	// Adiciona o script que será impresso no footer
+	$_kis_social_twitter_feed[] = "Kis.Social.Twitter.init({containerId: '{$id}', url: '" . get_bloginfo("url")."/wp-admin/admin-ajax.php" . "', twitterUser: '{$twitterUser}', qty: {$qty}, vars:{'action':'kis_social_twitter_feed_ajax', '_wpnonce':'{$_kis_social_twitter_nonce}' } });";
+ 	
+ 	
+ 	// Retorna ou imprime as tags
+ 	if($settings['echo']) echo $saida;
+ 	else return $saida;
+}
+
+function _kis_social_twitter_feed_print_script_on_footer() {
+	global $_kis_social_twitter_feed;
+	
+	$saida = "<script>\n";
+	foreach($_kis_social_twitter_feed as $inlineScript){
+		$saida .= $inlineScript . "\n";
+	}
+	$saida .= "</script>\n";
+	
+	echo $saida;
+}
+
+function _kis_social_twitter_feed_ajax() {
+	// Checa o NONCE
+	$nonce=$_REQUEST['_wpnonce'];
+	if (!wp_verify_nonce($nonce, 'kis_social_twitter_feed') ) die("Security check failed.");
+	
+	
+	// Seta as variaveis de configuracoes
+	$username = $_POST['user'];
+	$qty = $_POST['qty'];
+	
+	// Path para o cache
+	$file_cache = kis_get_files_path("social") . "/twitter_{$username}.php";
+	
+	
+	// Gera a URL
+	$url = "https://api.twitter.com/1/statuses/user_timeline.json";
+	$url.= "?include_entities=true";
+	$url.= "&include_rts=true";
+	$url.= "&screen_name={$username}";
+	$url.= "&count={$qty}";
+	
+	
+	// Verifica se o cache é mais velho do que 1 minuto
+	$useCache = true;
+	
+	// Verifica se o arquivo de cache existe
+	if(!file_exists($file_cache)) $useCache = false;
+	
+	// Verifica se o arquivo de cache é mais velho que 1 minuto
+	if($useCache) {
+		$timeCacheFile = filemtime($file_cache);
+		$timeEndCache = mktime(
+			intval(date("H", $timeCacheFile)), 
+			intval(date("i", $timeCacheFile))+1, 
+			intval(date("s", $timeCacheFile)), 
+			intval(date("m", $timeCacheFile)), 
+			intval(date("d", $timeCacheFile)), 
+			intval(date("Y", $timeCacheFile))
+		);
+		if($timeEndCache>=mktime()) $useCache = false;
+	}
+	
+	
+	// Mostra o arquivo de cache ou busca um novo no twitter
+	$json = "";
+	if($useCache) {
+		$json = file_get_contents($file_cache);
+	} else {
+		$json = kis_get_file_contents($url);
+		file_put_contents($file_cache, $json);
+	}
+	
+	header('Cache-Control: no-cache, must-revalidate');
+	header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+	header('Content-type: application/json');
+	die($json);
+}
+add_action('wp_ajax_kis_social_twitter_feed_ajax', '_kis_social_twitter_feed_ajax');
+add_action('wp_ajax_nopriv_kis_social_twitter_feed_ajax', '_kis_social_twitter_feed_ajax');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ?>
