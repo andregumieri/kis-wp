@@ -1,7 +1,7 @@
 /**
  * Funções para controlar hashtags
  *
- * @version 1.0
+ * @version 1.0.1
  * @author André Gumieri
  */
  
@@ -13,7 +13,7 @@ if(!window['Kis']) { var Kis={} }
 		inicial: null,
 		prefixo: null,
 		separador: null,
-		erro404: null,
+		erro404callback: null,
 		hashs: {},
 		
 		
@@ -48,19 +48,19 @@ if(!window['Kis']) { var Kis={} }
 				'inicial': '',
 				'prefixo': '',
 				'separador': '/',
-				'erro404': this.erro404
+				'erro404': null
 			}
 			$.extend(settings, opcoes);
 			
 			this.inicial = settings.inicial;
 			this.prefixo = settings.prefixo;
 			this.separador = settings.separador;
-			this.erro404 = settings.erro404;
+			this.erro404callback = settings.erro404;
 			
 			$(window).bind("hashchange", function() { self.executaCallback() } );
-			if( location.hash=="" || location.hash=="#" || location.hash=="#"+self.hashPrefix ) {
+			if( this.hashEstaVazia() ) {
 				if(self.inicial) {
-					self.mudaHash(self.inicial);
+					self.mudarHash(self.inicial);
 				}
 			} else {
 				self.executaCallback();
@@ -76,7 +76,15 @@ if(!window['Kis']) { var Kis={} }
 		executaCallback: function() {
 			var self = this;
 			var ignore = "#"+this.prefixo;
-			var hash = location.hash.substr(ignore.length);
+			var hash = null;
+			if( this.hashEstaVazia() ) {
+				if(self.inicial) {
+					self.mudarHash(self.inicial);
+					return ;
+				}
+			} else {
+				hash = location.hash.substr(ignore.length);
+			}
 			
 			// Se o hash estiver terminando com o separador, tira.
 			if(hash.substr(-1)==this.separador) {
@@ -93,7 +101,7 @@ if(!window['Kis']) { var Kis={} }
 			
 			// Valida se a URL existe
 			if(typeof(action)=="undefined") {
-				alert("Erro 404: Página não encontrada");
+				this.erro404(hash, hashSplited);
 			} else {
 				action.call(self, hash, hashSplited);
 			}
@@ -114,10 +122,36 @@ if(!window['Kis']) { var Kis={} }
 		
 		
 		/**
+		 * hashEstaVazia
+		 * Verifica se o HASH está vazio. O Hash pode ser passado como parâmetro
+		 * mas se deixado em branco, verifica o hash do location.hash
+		 *
+		 * @param OPTIONAL STRING hash: String com o hash que deve ser validado
+		 *
+		 * @return BOOL: TRUE se o hash estiver vazio, FALSE se o hash estiver preenchido
+		 */
+		hashEstaVazia: function(hash) {
+			var hashTeste = location.hash;
+			if(hash!=undefined) { hashTeste = hash; }
+			
+			if( hashTeste=="" || hashTeste=="#" || hashTeste=="#"+this.prefixo ) {
+				return true;
+			}
+			
+			return false;
+		},
+		
+		
+		
+		/**
 		 * erro404
 		 * Mensagem para quando a página não existe
 		 */
-		erro404: function() {
+		erro404: function(hash, hashSplited) {
+			if(typeof(this.erro404callback)=="function") {
+				this.erro404callback.call(this, hash, hashSplited);
+				return ;
+			}
 			alert("Erro 404: Página não encontrada");
 		}
 

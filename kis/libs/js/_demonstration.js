@@ -16,18 +16,39 @@
 				Kis.Hash.adicionaHash("hash1", this.urlChanged);
 				Kis.Hash.adicionaHash("hash2", this.urlChanged);
 				Kis.Hash.adicionaHash("hash3", this.urlChanged);
-				Kis.Hash.init({prefixo: '/'});
+				Kis.Hash.init({prefixo: '/', inicial:'hash1', erro404: this.erro });
 			},
 			
 			urlChanged: function(url, splited) {
 				$("#hashTest").find("a").css("font-weight", "normal");
 				if(splited.length==1) {
+				
 					$("#hashTest").find("."+splited[0]).css("font-weight", "bold");
+				
 				} else if(splited.length==2) {
-					$("#hashTest").find("."+splited[0]+"_"+splited[1]).css("font-weight", "bold");
+					
+					var $links = $("#hashTest").find("."+splited[0]+"_"+splited[1]);
+					if($links.is("*")) {
+						$links.css("font-weight", "bold");
+					} else {
+						Kis.Hash.erro404(url, splited);
+					}
+					
 				} else if(splited.length==3) {
-					$("#hashTest").find("."+splited[0]+"_"+splited[1]+"_"+splited[2]).css("font-weight", "bold");
+					var $links = $("#hashTest").find("."+splited[0]+"_"+splited[1]+"_"+splited[2]);
+					if($links.is("*")) {
+						$links.css("font-weight", "bold");
+					} else {
+						Kis.Hash.erro404(url, splited);
+					}
+				
+				} else {
+					Kis.Hash.erro404(url, splited);
 				}
+			}, 
+			
+			erro: function(url, splited) {
+				alert("A URL '" + url + "' não foi encontrada. Tente outra.");
 			}
 		
 		}
