@@ -7,7 +7,7 @@
 			e.preventDefault();
 			var $abas = $("div.kis_manager_panel");
 			var $aba_ativa = $("div.kis_manager_panel_showed");
-			var $aba_clicada = $("#kis_manager_configuracoes_" + $(this).attr("href").substr(1));
+			var $aba_clicada = $("#kis_manager_" + $(this).attr("href").substr(1));
 
 			if($aba_clicada.hasClass("kis_manager_panel_showed")==true) 
 				return false;

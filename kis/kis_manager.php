@@ -368,7 +368,7 @@ function kis_manager_admin_menu_callback() {
 					$style = "";
 				}
 				
-				$html .= "<a href=\"#{$painel['slug']}\" class=\"nav-tab {$active}\">{$painel['titulo']}</a>";
+				$html .= "<a href=\"#{$km['slug']}_{$painel['slug']}\" class=\"nav-tab {$active}\">{$painel['titulo']}</a>";
 				
 				$paineis .= "<div class=\"kis_manager_panel\" id=\"kis_manager_{$km['slug']}_{$painel['slug']}\" style=\"{$style}\">";
 				$paineis .= "<table class=\"form-table\"><tbody>";
