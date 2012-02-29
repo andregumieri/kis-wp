@@ -6,6 +6,9 @@ require("kis/kis_minify.php"); // Módulo para fazer minify de scripts e css
 require("kis/kis_string.php"); // Módulo com funções de strings
 require("kis/kis_thumbnail.php"); // Módulo de thumbnails do post
 
+// Inicia o jQuery
+wp_enqueue_script("jquery");
+
 // Adiciona suporte ao Post Thumbnail
 add_theme_support( 'post-thumbnails' ); 
 

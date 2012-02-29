@@ -3,7 +3,8 @@
 	<?php 
 	/* Chamadas manuais de scripts vão aqui */
 	$js = array();
-	// $js[] = get_template_directory_uri()."assets/js/base.js";
+	$js[] = "kis/libs/js/kis.hash.js";
+	$js[] = "kis/libs/js/_demonstration.js";
 	// $js[] = get_template_directory_uri()."assets/js/classes/arquivo.class.js";
 	
 	kis_minify($js, "js", kis_is_dev_enviroment());
