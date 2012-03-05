@@ -5,7 +5,7 @@
  * Funções de redes sociais
  *
  * @author André Gumieri
- * @version 1.2
+ * @version 1.2.1
  *
  * @package KIS
  * @subpackage Social
@@ -178,7 +178,7 @@ function kis_social_facebook_like_box($fanpageUrl, $appId, $options=array()) {
  * Monta o share button do twitter
  *
  * @author André Gumieri
- * @since 1.0.1
+ * @since 1.1
  *
  * @param string $shareUrl URL da página que será dado o share. Se não especificado, pega a URL atual.
  * @param string $shareTexto Texto do que será compartilhado. Se não especificado, pega o título da página.
@@ -193,6 +193,7 @@ function kis_social_facebook_like_box($fanpageUrl, $appId, $options=array()) {
  *		echo: (bool) [*TRUE|FALSE] True se for para dar echo no iframe, false se for para retornar na função
  *		container: (mixed) [*FALSE|<div, span, section, …>] Se for false, não envolve em um container, se for uma tag, coloca no container
  *		container-class: (string) Classe que será colocada no container
+ *		printJavascript: (bool) [*TRUE|FALSE] True se for para exibir o Javscript e False se não.
  * @return (string) Tag do twitter montada.
  */
 function kis_social_twitter_share_button($shareUrl="", $shareText="", $twitterUser="", $options=array()) {
@@ -205,7 +206,8 @@ function kis_social_twitter_share_button($shareUrl="", $shareText="", $twitterUs
 		"textoBotao" => "Tweetar",
 		"echo" => true, 
 		"container" => false,
-		"container-class"=>"kis-social-twitter-share-button"
+		"container-class"=>"kis-social-twitter-share-button",
+		"printJavascript"=>true
 	);
 	$settings = array_merge($settings, $options);
 	
@@ -228,7 +230,10 @@ function kis_social_twitter_share_button($shareUrl="", $shareText="", $twitterUs
 		$button = "<" . $settings['container'] . $classeContainer . ">" . $button . "</" . $settings['container'] . ">";
 	}
 	
-	$button.= '<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>';
+	if($settings['printJavascript']) {
+		$button.= '<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>';
+	}
+	
 	if($settings['echo']) {
 		echo $button;
 	} else {
