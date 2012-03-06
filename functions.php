@@ -5,6 +5,7 @@ require("kis/kis_manager.php"); // Módulo de painel de settings
 require("kis/kis_minify.php"); // Módulo para fazer minify de scripts e css
 require("kis/kis_string.php"); // Módulo com funções de strings
 require("kis/kis_thumbnail.php"); // Módulo de thumbnails do post
+require("kis/kis_social.php");
 
 // Inicia o jQuery
 wp_enqueue_script("jquery");

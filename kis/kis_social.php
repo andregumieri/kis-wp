@@ -5,7 +5,7 @@
  * Funções de redes sociais
  *
  * @author André Gumieri
- * @version 1.2.1
+ * @version 1.3
  *
  * @package KIS
  * @subpackage Social
@@ -377,7 +377,106 @@ add_action('wp_ajax_kis_social_twitter_feed_ajax', '_kis_social_twitter_feed_aja
 add_action('wp_ajax_nopriv_kis_social_twitter_feed_ajax', '_kis_social_twitter_feed_ajax');
 
 
+/**
+ * Monta o +1 button do Google
+ *
+ * @author André Gumieri
+ * @since 1.0
+ *
+ * Mais opções de configuração @link http://www.google.com/intl/en/webmasters/+1/button/index.html
+ *
+ * @param array $options Opções do plugin:
+ * 		size: (string) [small|*medium|standard|tall] Tamanho do button
+ *		annotation: (string) [*bubble|inline|none] Formato da informação de cliques
+ *		width: (int) [450] Largura do box para quando o annotation for "inline"
+ *		language: (string) [*pt-BR|@link http://www.google.com/intl/en/webmasters/+1/button/index.html] Linguagem padrão do botão
+ *		html5syntax (bool) [*TRUE|FALSE] Determina se a tag exibida será HTML5 (<div />) ou marcação do google (<g: />)
+ *		parse (string) [*default|explicit] No default, é colocado o javascript no html e a montagem é feita automatica. No explicit, é preciso chamar manualmente o comando <script type="text/javascript">gapi.plusone.go();</script>.
+ *		url (string) URL para ser dado o +1. Se deixado em branco, o G+1 vai determinar qual a url.
+ *		echo: (bool) [*TRUE|FALSE] True se for para dar echo no iframe, false se for para retornar na função
+ *		container: (mixed) [*FALSE|<div, span, section, ...>] Se for false, não envolve em um container, se for uma tag, coloca no container
+ *		container-class: (string) Classe que será colocada no container
+ *
+ * @return (string) Tag do twitter montada.
+ */
+$_kis_social_google_plusone_button_print_script_on_footer = false;
+$_kis_social_google_plusone_button_print_script_on_footer_attrs = array();
+function kis_social_google_plusone_button($options=array()) {
+	global $_kis_social_google_plusone_button_print_script_on_footer, $_kis_social_google_plusone_button_print_script_on_footer_attrs;
+	$settings = array(
+		"size" => "medium",
+		"annotation" => "bubble",
+		"width" => 450,
+		"language" => "pt-BR",
+		"html5syntax" => true,
+		"parse" => "default",
+		"url" => "",
+		"echo" => true, 
+		"container" => false,
+		"container-class"=>"kis-social-google-plusone-button"
+	);
+	$settings = array_merge($settings, $options);
+	
+	// Monta a tag do +1
+	$tag = "div";
+	$attrPrefix = "data-";
+	$tagClass = " class=\"g-plusone\"";
+	if(!$settings['html5syntax']) {
+		$tag = "g:plusone";
+		$attrPrefix = "";
+		$tagClass = "";
+	}
+	
+	
+	$attrs = "";
+	if($settings['size']!="standard") $attrs .= " {$attrPrefix}size=\"{$settings['size']}\"";
+	if($settings['annotation']!="bubble") $attrs .= " {$attrPrefix}annotation=\"{$settings['annotation']}\"";
+	if($settings['url']!="") $attrs .= " {$attrPrefix}href=\"{$settings['url']}\"";
+	
+	$button = "<{$tag}{$tagClass} {$attrs}></{$tag}>";
+	
+	if($settings['container']!==false) {
+		$classeContainer = "";
+		if(!empty($settings['container-class'])) $classeContainer = " class=\"{$settings['container-class']}\"";
+		$button = "<" . $settings['container'] . $classeContainer . ">" . $button . "</" . $settings['container'] . ">";
+	}
+	
+	// Configura o javascript
+	if($settings['language']!="en-US" && !empty($settings['language'])) {
+		$_kis_social_google_plusone_button_print_script_on_footer_attrs['lang'] = $settings['language'];
+	}
+	
+	if($settings['parse']=="explicit") {
+		$_kis_social_google_plusone_button_print_script_on_footer_attrs['parsetags'] = $settings['explicit'];
+	}
+	
+	// Se for a primeira passagem, adiciona as actions
+	if(!$_kis_social_google_plusone_button_print_script_on_footer) {
+		$_kis_social_google_plusone_button_print_script_on_footer = true;
+		add_action('wp_print_footer_scripts', '_kis_social_google_plusone_button_print_script_on_footer');
+	}
+	
+	
+	if($settings['echo']) {
+		echo $button;
+	} else {
+		return $button;
+	}
+}
 
+function _kis_social_google_plusone_button_print_script_on_footer() {
+	global $_kis_social_google_plusone_button_print_script_on_footer_attrs;
+	$saida = '<script type="text/javascript" src="https://apis.google.com/js/plusone.js">';
+
+	$arrAttrs = array();
+	foreach($_kis_social_google_plusone_button_print_script_on_footer_attrs as $key=>$value) {
+		$arrAttrs[] = "{$key}: '{$value}'";
+	}
+	$saida .= "{" . implode(", ", $arrAttrs) . "}";		
+
+	$saida .= '</script>';
+	echo $saida;
+}
 
 
 
