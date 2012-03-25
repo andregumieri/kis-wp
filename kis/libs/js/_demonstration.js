@@ -2,6 +2,22 @@
 	var Demonstration = {
 		init: function() {
 			this.Hash.init();
+			this.AjaxForm.init();
+			this.Placeholder.init();
+		},
+		
+		AjaxForm: {
+			init: function() {
+				$form = $("#ajaxForm,#ajaxFormWithPlaceholder");
+				Kis.AjaxForm.init($form, "ajaxForm", "Função executada sem erros");
+			}
+		},
+		
+		Placeholder: {
+			init: function() {
+				$form = $("form");
+				Kis.Placeholder.init($form);
+			}
 		},
 		
 		Hash: {

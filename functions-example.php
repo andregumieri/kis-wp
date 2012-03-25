@@ -32,4 +32,27 @@
 	// Param 6 (opcional) - Valor padrão do campo, ou valor selecionado em checkbox, radio e option.
 	// Param 7 (opcional) - Array de opções para determinados tipos de campos
 	kis_cpt_add_field("projetos", "informacoes", "descricao", "Descrição", "textarea");
+	
+	
+	////////////////////////////////
+	// Exemplo Kis Ajax Form (JS)
+	////////////////////////////////
+	wp_enqueue_script("kislibs_kis_ajax-form");
+	function ajaxForm() {
+		$nome = $_POST['nome'];
+		$email = $_POST['email'];
+		
+		if(empty($nome) || empty($email)) {
+			die("Preencha os campos");
+		}
+		die("ok");
+	}
+	add_action('wp_ajax_nopriv_ajaxForm', 'ajaxForm');
+	add_action('wp_ajax_ajaxForm', 'ajaxForm');
+	
+	
+	////////////////////////////////
+	// Placeholder
+	////////////////////////////////
+	wp_enqueue_script("kislibs_kis_placeholder");
 ?>

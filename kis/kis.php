@@ -12,7 +12,9 @@
  * @author André Gumieri
  * @version 1.0
  */
-wp_register_script("kislibs_kis_general", get_bloginfo("template_directory")."/kis/libs/js/kis.general.js", "2.0", true);
+wp_register_script("kislibs_kis_general", get_bloginfo("template_directory")."/kis/libs/js/kis.general.js", array(), "2.0", true);
+wp_register_script("kislibs_kis_ajax-form", get_bloginfo("template_directory")."/kis/libs/js/kis.ajax-form.js", array("jquery", "kislibs_kis_general"), "1.0", true);
+wp_register_script("kislibs_kis_placeholder", get_bloginfo("template_directory")."/kis/libs/js/kis.placeholder.js", array("jquery"), "1.0", true);
 
 
 /**
