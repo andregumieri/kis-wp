@@ -2,7 +2,7 @@
 /**
  * Kis
  * @since 11/08/2011
- * @version 1.2
+ * @version 1.3
  * @author André Gumieri - andregumieri@gmail.com
  */
  
