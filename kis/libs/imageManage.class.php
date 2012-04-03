@@ -2,7 +2,7 @@
 /*
 @class imageManage
 @abstract Esta classe faz o manage de imagens no PHP
-@version 0.1.1
+@version 0.1.2
 */
 class imageManage {
 	protected $path;
@@ -179,12 +179,13 @@ class imageManage {
 	/*
 	@function cropProportional
 	@abstract Faz o crop da imagem dando resize proporcional
-	@param	width	int	- Largura para a imagem. Inteiro positivo maior que 0.
-	@param	height	int	- Altura para a imagem. Inteiro positivo maior que 0.
+	@param	width		int		- Largura para a imagem. Inteiro positivo maior que 0.
+	@param	height		int		- Altura para a imagem. Inteiro positivo maior que 0.
+	@param	position 	string	- Posição (vertical) do crop [top/*center/bottom]
 	@return img_resource em caso de sucesso ou false caso ocorra qualquer erro.
-	@version 0.1
+	@version 0.2
 	*/
-	function cropProportional($width, $height) {
+	function cropProportional($width, $height, $position="center") {
 		// Verifica se os números são inteiros maiores que zero e dispara erro caso não seja
 		$width = intval($width);
 		$height = intval($height);
@@ -194,7 +195,17 @@ class imageManage {
 		$imgs = $this->resizeProportionalByWidthAndHeight($width, $height, true);
 		$imgs_d = $this->getDimension($imgs);
 		$imgd = imagecreatetruecolor($width, $height);
-		if(!imagecopy($imgd, $imgs, 0, 0, (($imgs_d['width']-$width)/2), (($imgs_d['height']-$height)/2), $imgs_d['width'], $imgs_d['height'])) {
+		
+		$src_x = (($imgs_d['width']-$width)/2);
+		$src_y = (($imgs_d['height']-$height)/2);
+		
+		if($position=="top") {
+			$src_y = 0;
+		} elseif($position=="bottom") {
+			$src_y = $imgs_d['height']-$height;
+		}
+		
+		if(!imagecopy($imgd, $imgs, 0, 0, $src_x, $src_y, $imgs_d['width'], $imgs_d['height'])) {
 			trigger_error("There was an error trying to crop the image.", E_USER_ERROR);
 			return false;
 		}
