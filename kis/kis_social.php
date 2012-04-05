@@ -5,7 +5,7 @@
  * Funções de redes sociais
  *
  * @author André Gumieri
- * @version 1.3
+ * @version 1.3.1
  *
  * @package KIS
  * @subpackage Social
@@ -247,7 +247,7 @@ function kis_social_twitter_share_button($shareUrl="", $shareText="", $twitterUs
  * Monta o twitter feed
  *
  * @author André Gumieri
- * @since 1.0
+ * @since 1.0.1
  *
  * @param string $twitterUser Usuário que será resgatado o feed.
  * @param string $qty Quantidade de tweets retornados. Default: 5
@@ -328,6 +328,7 @@ function _kis_social_twitter_feed_ajax() {
 	
 	// Path para o cache
 	$file_cache = kis_get_files_path("social") . "/twitter_{$username}.php";
+	$file_cache_time =  kis_get_files_path("social") . "/twitter_{$username}_time.php";
 	
 	
 	// Gera a URL
@@ -338,15 +339,20 @@ function _kis_social_twitter_feed_ajax() {
 	$url.= "&count={$qty}";
 	
 	
+	// Seta o time atual
+	$current_time = mktime();
+	
+	
 	// Verifica se o cache é mais velho do que 1 minuto
 	$useCache = true;
 	
 	// Verifica se o arquivo de cache existe
 	if(!file_exists($file_cache)) $useCache = false;
+	if(!file_exists($file_cache_time)) $useCache = false;
 	
 	// Verifica se o arquivo de cache é mais velho que 1 minuto
 	if($useCache) {
-		$timeCacheFile = filemtime($file_cache);
+		$timeCacheFile = strtotime(file_get_contents($file_cache_time));
 		$timeEndCache = mktime(
 			intval(date("H", $timeCacheFile)), 
 			intval(date("i", $timeCacheFile))+1, 
@@ -355,7 +361,8 @@ function _kis_social_twitter_feed_ajax() {
 			intval(date("d", $timeCacheFile)), 
 			intval(date("Y", $timeCacheFile))
 		);
-		if($timeEndCache>=mktime()) $useCache = false;
+		
+		if($timeEndCache<$current_time) $useCache = false;
 	}
 	
 	
@@ -365,7 +372,11 @@ function _kis_social_twitter_feed_ajax() {
 		$json = file_get_contents($file_cache);
 	} else {
 		$json = kis_get_file_contents($url);
+		if(file_exists($file_cache)) unlink($file_cache);
+		if(file_exists($file_cache_time)) unlink($file_cache_time);
+		
 		file_put_contents($file_cache, $json);
+		file_put_contents($file_cache_time, date("Y-m-d H:i:s", $current_time));
 	}
 	
 	header('Cache-Control: no-cache, must-revalidate');
