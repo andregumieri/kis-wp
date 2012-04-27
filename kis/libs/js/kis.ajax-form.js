@@ -1,20 +1,20 @@
 /**
  * Ajax Form
  *
- * @version 1.0
+ * @version 1.1
  * @author André Gumieri
  */
 if(!window['Kis']) { var Kis={} }
 ;(function(namespace, $) {
 	namespace.AjaxForm = {
-		init: function($form, wpAjaxFunction, mensagemDeSucesso) {
-			if(typeof(mensagemDeSucesso)=="undefined") {
+		init: function($form, wpAjaxFunction, mensagemDeSucesso, callback) {
+			if(typeof(mensagemDeSucesso)=="undefined" || mensagemDeSucesso=="") {
 				mensagemDeSucesso = "Mensagem enviada. Obrigado.";
 			}
-			this.events($form, wpAjaxFunction, mensagemDeSucesso);
+			this.events($form, wpAjaxFunction, mensagemDeSucesso, callback);
 		},
 		
-		events: function($form, wpAjaxFunction, mensagemDeSucesso) {
+		events: function($form, wpAjaxFunction, mensagemDeSucesso, callback) {
 			
 			$form.submit(function(e) {
 				e.preventDefault();
@@ -66,8 +66,14 @@ if(!window['Kis']) { var Kis={} }
 					dados["action"]=wpAjaxFunction;
 					$.post($(this).attr("action"), dados, function(ret) {
 						if( ret.toLowerCase()!="ok" ) {
+							if(typeof(callback)=="function") {
+								callback.call(this, false);
+							}
 							alert(ret);
 						} else {
+							if(typeof(callback)=="function") {
+								callback.call(this, true);
+							}
 							alert(mensagemDeSucesso);
 							$form.find("input[type=text],textarea").each(function() {
 								$(this).val($(this).data("placeHolder"));
