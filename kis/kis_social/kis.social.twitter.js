@@ -38,6 +38,7 @@ if(!window['Kis']) { var Kis={} }
 			
 			// Pega a lista de tweets
 			$.post(settings.url, vars, function(data) {
+				console.log(data);
 				$container.removeClass("carregando");
 
 				if(data.error) {
@@ -102,7 +103,7 @@ if(!window['Kis']) { var Kis={} }
 					newText = "<a href=\"http://twitter.com/"+value.user.screen_name+"\" target=\"_blank\" class=\"screen_name\">@"+value.user.screen_name+"</a> " + newText;
 					
 					// Adiciona o tempo por escrito
-					newText = newText + " <span class=\"texto_escrito\">" + value.tempoEscrito + "</span>";
+					newText = newText + " <span class=\"tempo_escrito\">" + value.tempoEscrito + "</span>";
 				
 					// Coloca o tweet na lista
 					$li.append("<div class=\"text\">" + newText + "</div>");
