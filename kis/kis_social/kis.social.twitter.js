@@ -1,7 +1,7 @@
 /**
  * Classe com funções do Kis.Social.Twitter
  *
- * @version 1.0
+ * @version 1.1
  * @author André Gumieri
  */
  
@@ -96,6 +96,13 @@ if(!window['Kis']) { var Kis={} }
 						});
 					}
 					
+					newText = "<span class=\"texto\">" + newText + "</span>";
+					
+					// Coloca o link para o profile no começo do texto
+					newText = "<a href=\"http://twitter.com/"+value.user.screen_name+"\" target=\"_blank\" class=\"screen_name\">@"+value.user.screen_name+"</a> " + newText;
+					
+					// Adiciona o tempo por escrito
+					newText = newText + " <span class=\"texto_escrito\">" + value.tempoEscrito + "</span>";
 				
 					// Coloca o tweet na lista
 					$li.append("<div class=\"text\">" + newText + "</div>");

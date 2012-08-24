@@ -247,7 +247,7 @@ function kis_social_twitter_share_button($shareUrl="", $shareText="", $twitterUs
  * Monta o twitter feed
  *
  * @author André Gumieri
- * @since 1.0.1
+ * @since 1.1
  *
  * @param string $twitterUser Usuário que será resgatado o feed.
  * @param string $qty Quantidade de tweets retornados. Default: 5
@@ -379,10 +379,31 @@ function _kis_social_twitter_feed_ajax() {
 		file_put_contents($file_cache_time, date("Y-m-d H:i:s", $current_time));
 	}
 	
+	
+	// Arruma alguns campos antes de retornar o webservice
+	$jsonObj = json_decode($json, true);
+	foreach($jsonObj as &$jsonObjTweet) {
+		$difference = time() - strtotime($jsonObjTweet['created_at']);
+		
+		$periods = array("segundo", "minuto", "hora", "dia", "semana", "mês", "meses", "ano", "década");
+		$lengths = array(60, 60, 24, 7, 4.35, 12, 10);
+		for($j = 0; $difference >= $lengths[$j]; $j++) {
+			$difference /= $lengths[$j];
+		}
+		$difference = round($difference);
+		if($difference != 1) {
+			if($periods[$j]=="mês") $periods[$j] = "meses";
+			else $periods[$j].= "s";
+		}
+		$jsonObjTweet['tempoEscrito'] = "$difference $periods[$j] atrás";
+	}
+	
+	
 	header('Cache-Control: no-cache, must-revalidate');
 	header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
 	header('Content-type: application/json');
-	die($json);
+	
+	die(json_encode($jsonObj));
 }
 add_action('wp_ajax_kis_social_twitter_feed_ajax', '_kis_social_twitter_feed_ajax');
 add_action('wp_ajax_nopriv_kis_social_twitter_feed_ajax', '_kis_social_twitter_feed_ajax');
