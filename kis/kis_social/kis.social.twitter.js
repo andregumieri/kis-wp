@@ -38,7 +38,6 @@ if(!window['Kis']) { var Kis={} }
 			
 			// Pega a lista de tweets
 			$.post(settings.url, vars, function(data) {
-				console.log(data);
 				$container.removeClass("carregando");
 
 				if(data.error) {
