@@ -5,8 +5,7 @@
 	
 	<?php
 	$css = array();
-	$css[] = get_template_directory_uri()."style.css"; // Estilo padrão do wordpress
-	// $css[] = get_template_directory_uri()."assets/fonts/stylesheet.css";  // Folha de estilo adicional
+	$css[] = "style.css"; // Estilo padrão do wordpress
 	
 	kis_minify($css, "css", kis_is_dev_enviroment());
 	// Parametro 1 - Array com os arquivos que devem ser carregados
