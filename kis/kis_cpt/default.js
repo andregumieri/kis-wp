@@ -18,7 +18,14 @@
 		
 		if($("a.kis_cpt_upload_btn").is("*")) {
 			window.send_to_editor = function(html) {
-				imgurl = $('img',"<div>"+html+"</div>").attr('src');
+				// console.log(html);
+				imgurl = "";
+				if($('img',"<div>"+html+"</div>").is("img")) {
+					imgurl = $('img',"<div>"+html+"</div>").attr('src');
+				} else if($('a',"<div>"+html+"</div>").is("a")) {
+					imgurl = $('a',"<div>"+html+"</div>").attr('href');
+				}
+				
 				
 				var field_id = $("a.kis_cpt_upload_btn_clicado").data("ref-field");
 				$("#"+field_id).val(imgurl);
