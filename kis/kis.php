@@ -123,7 +123,8 @@ function kis_is_dev_enviroment() {
 		($addr[0]=="127" && $addr[1]=="0" && $addr[2]=="0" && $addr[3]=="1") ||
 		($addr[0]=="192" && $addr[1]=="168") ||
 		($addr[0]=="172" && $addr[1]=="16") ||
-		($addr[0]=="10")
+		($addr[0]=="10") ||
+		($addr[0]=="::1")
 	) {
 		return true;
 	} else {
